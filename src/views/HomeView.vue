@@ -15,8 +15,6 @@
         <pre>{{ JSON.stringify(result, null, 2) }}</pre>
       </div>
     </div>
-    
-    <router-link to="/demo" class="demo-link">Полная демонстрация</router-link>
   </div>
 </template>
 
