@@ -34,17 +34,10 @@ const value = computed({
 </script>
 
 <style lang="scss" scoped>
+@import '../styles/mixins.scss';
+
 .form-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: $border-radius;
-  font-size: 14px;
+  @include form-field-base;
   resize: vertical;
-  
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-  }
 }
 </style>
