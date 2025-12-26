@@ -1,21 +1,29 @@
 <template>
-  <input
+  <select
     :id="id"
-    :type="type"
-    :placeholder="placeholder"
     v-model="value"
-    class="form-input"
-  />
+    class="form-select"
+  >
+    <option value="">{{ placeholder || 'Выберите опцию' }}</option>
+    <option v-for="option in options" :key="option.value" :value="option.value">
+      {{ option.label }}
+    </option>
+  </select>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 
+interface Option {
+  value: string | number
+  label: string
+}
+
 interface Props {
   id: string
-  type?: string
   placeholder?: string
-  modelValue: string
+  modelValue: string | number | boolean
+  options?: Option[]
 }
 
 interface Emits {
@@ -26,13 +34,13 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const value = computed({
-  get: () => props.modelValue,
+  get: () => String(props.modelValue || ''),
   set: (val) => emit('update:modelValue', val)
 })
 </script>
 
 <style lang="scss" scoped>
-.form-input {
+.form-select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;

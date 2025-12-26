@@ -10,6 +10,29 @@
         :type="field.inputType"
         :placeholder="field.placeholder"
         v-model="formData[field.name]"
+      />
+      
+      <FormSelect
+        v-else-if="field.type === 'select'"
+        :id="field.name"
+        :placeholder="field.placeholder"
+        :options="field.options"
+        v-model="formData[field.name]"
+      />
+      
+      <FormCheckbox
+        v-else-if="field.type === 'checkbox'"
+        :id="field.name"
+        :label="field.checkboxLabel"
+        v-model="formData[field.name]"
+      />
+      
+      <FormTextarea
+        v-else-if="field.type === 'textarea'"
+        :id="field.name"
+        :placeholder="field.placeholder"
+        :rows="field.rows"
+        v-model="formData[field.name]"
       />     
     </div>
     
@@ -21,8 +44,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { reactive, watch } from 'vue'
 import FormInput from './FormInput.vue'
+import FormSelect from './FormSelect.vue'
+import FormCheckbox from './FormCheckbox.vue'
+import FormTextarea from './FormTextarea.vue'
 
 interface FormField {
   name: string
@@ -31,13 +57,14 @@ interface FormField {
   placeholder?: string
   inputType?: string
   rows?: number
+  required?: boolean
   checkboxLabel?: string
   options?: Array<{ value: string | number; label: string }>
 }
 
 interface Props {
   fields: FormField[]
-  modelValue: any
+  modelValue:  any
 }
 
 interface Emits {
@@ -49,11 +76,13 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const formData = computed({
-  get: () => props.modelValue,
-  set: (value) => {
-    emit('update:modelValue', value)
-  }
+const formData = reactive({ ...props.modelValue })
+watch(() => props.modelValue, (newVal) => {
+  Object.assign(formData, newVal)
+}, { deep: true })
+
+watch(formData, (newVal) => {
+  emit('update:modelValue', { ...newVal })
 })
 
 const handleSubmit = () => {

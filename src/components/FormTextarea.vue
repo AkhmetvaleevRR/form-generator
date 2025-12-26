@@ -1,11 +1,11 @@
 <template>
-  <input
+  <textarea
     :id="id"
-    :type="type"
     :placeholder="placeholder"
+    :rows="rows || 3"
     v-model="value"
-    class="form-input"
-  />
+    class="form-textarea"
+  ></textarea>
 </template>
 
 <script setup lang="ts">
@@ -13,8 +13,8 @@ import { computed } from 'vue'
 
 interface Props {
   id: string
-  type?: string
   placeholder?: string
+  rows?: number
   modelValue: string
 }
 
@@ -26,18 +26,19 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const value = computed({
-  get: () => props.modelValue,
+  get: () => String(props.modelValue || ''),
   set: (val) => emit('update:modelValue', val)
 })
 </script>
 
 <style lang="scss" scoped>
-.form-input {
+.form-textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: $border-radius;
   font-size: 14px;
+  resize: vertical;
   
   &:focus {
     outline: none;
