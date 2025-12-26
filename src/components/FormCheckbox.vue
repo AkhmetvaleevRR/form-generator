@@ -18,7 +18,7 @@ interface Props {
   id: string
   label?: string
   required?: boolean
-  modelValue: boolean
+  modelValue: string | number | boolean
 }
 
 interface Emits {

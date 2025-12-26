@@ -1,55 +1,59 @@
 <template>
   <form @submit.prevent="handleSubmit" class="form-generator" novalidate>
     <div v-for="field in fields" :key="field.name" class="form-field">
-      <label :for="field.name" class="form-label">
-        {{ field.label }}
-        <span v-if="field.required" class="required-mark">*</span>
-      </label>
-      
-      <FormInput
-        v-if="field.type === 'input'"
-        :id="field.name"
-        :type="field.inputType"
-        :placeholder="field.placeholder"
-        :required="field.required"
-        :class="{ 'input-error': errors[field.name] }"
-        v-model="formData[field.name]"
-      />
-      
-      <FormSelect
-        v-else-if="field.type === 'select'"
-        :id="field.name"
-        :placeholder="field.placeholder"
-        :options="field.options"
-        :required="field.required"
-        :class="{ 'input-error': errors[field.name] }"
-        v-model="formData[field.name]"
-      />
-      
-      <FormCheckbox
-        v-else-if="field.type === 'checkbox'"
-        :id="field.name"
-        :label="field.checkboxLabel"
-        :required="field.required"
-        :class="{ 'input-error': errors[field.name] }"
-        v-model="formData[field.name]"
-      />
-      
-      <FormTextarea
-        v-else-if="field.type === 'textarea'"
-        :id="field.name"
-        :placeholder="field.placeholder"
-        :rows="field.rows"
-        :required="field.required"
-        :class="{ 'input-error': errors[field.name] }"
-        v-model="formData[field.name]"
-      />
-      <span v-if="errors[field.name]" class="error-message">Поле обязательно для заполнения</span>
+      <slot :name="`field-${field.name}`" :field="field" :value="formData[field.name]" :error="errors[field.name]">
+        <label :for="field.name" class="form-label">
+          {{ field.label }}
+          <span v-if="field.required" class="required-mark">*</span>
+        </label>
+        
+        <FormInput
+          v-if="field.type === 'input'"
+          :id="field.name"
+          :type="field.inputType"
+          :placeholder="field.placeholder"
+          :required="field.required"
+          :class="{ 'input-error': errors[field.name] }"
+          v-model="formData[field.name]"
+        />
+        
+        <FormSelect
+          v-else-if="field.type === 'select'"
+          :id="field.name"
+          :placeholder="field.placeholder"
+          :options="field.options"
+          :required="field.required"
+          :class="{ 'input-error': errors[field.name] }"
+          v-model="formData[field.name]"
+        />
+        
+        <FormCheckbox
+          v-else-if="field.type === 'checkbox'"
+          :id="field.name"
+          :label="field.checkboxLabel"
+          :required="field.required"
+          :class="{ 'input-error': errors[field.name] }"
+          v-model="formData[field.name]"
+        />
+        
+        <FormTextarea
+          v-else-if="field.type === 'textarea'"
+          :id="field.name"
+          :placeholder="field.placeholder"
+          :rows="field.rows"
+          :required="field.required"
+          :class="{ 'input-error': errors[field.name] }"
+          v-model="formData[field.name]"
+        />
+        <span v-if="errors[field.name]" class="error-message">Поле обязательно для заполнения</span>
+      </slot>
     </div>
     
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Сохранить</button>
-      <button type="button" @click="handleCancel" class="btn btn-secondary">Отмена</button>
+      <slot name="actions" :submit="handleSubmit" :cancel="handleCancel">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="button" @click="handleCancel" class="btn btn-secondary">Отмена</button>
+      </slot>
     </div>
   </form>
 </template>
@@ -75,7 +79,7 @@ interface FormField {
 
 interface Props {
   fields: FormField[]
-  modelValue: any
+  modelValue: Record<string, string | number | boolean>
 }
 
 interface Emits {
@@ -96,7 +100,6 @@ watch(() => props.modelValue, (newVal) => {
 
 watch(formData, (newVal) => {
   emit('update:modelValue', { ...newVal })
-  // Очистка ошибок при изменении полей
   for (const key in errors) {
     if (errors[key]) {
       const val = newVal[key]

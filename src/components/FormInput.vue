@@ -17,7 +17,7 @@ interface Props {
   type?: string
   placeholder?: string
   required?: boolean
-  modelValue: string
+  modelValue: string | number | boolean
 }
 
 interface Emits {
@@ -28,7 +28,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const value = computed({
-  get: () => props.modelValue,
+  get: () => String(props.modelValue ?? ''),
   set: (val) => emit('update:modelValue', val)
 })
 </script>
