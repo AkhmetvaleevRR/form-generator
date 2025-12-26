@@ -16,72 +16,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import FormGenerator from '../components/FormGenerator.vue'
 
-const formFields = [
-  {
-    name: 'name',
-    type: 'input',
-    label: 'Имя',
-    placeholder: 'Введите ваше имя'
-  },
-  {
-    name: 'email',
-    type: 'input',
-    label: 'Email',
-    inputType: 'email',
-    placeholder: 'example@mail.com'
-  },
-  {
-    name: 'country',
-    type: 'select',
-    label: 'Страна',
-    placeholder: 'Выберите страну',
-    options: [
-      { value: 'ru', label: 'Россия' },
-      { value: 'us', label: 'США' },
-      { value: 'de', label: 'Германия' }
-    ]
-  },
-  {
-    name: 'subscribe',
-    type: 'checkbox',
-    label: 'Подписка',
-    checkboxLabel: 'Подписаться на рассылку'
-  },
-  {
-    name: 'message',
-    type: 'textarea',
-    label: 'Сообщение',
-    placeholder: 'Введите ваше сообщение',
-    rows: 4
-  }
-]
+const store = useStore()
 
-const formData = ref({
-  name: '',
-  email: '',
-  country: '',
-  subscribe: false,
-  message: ''
+const formFields = computed(() => store.state.formFields)
+
+const formData = computed({
+  get: () => store.state.formData,
+  set: (value) => store.commit('UPDATE_FORM_DATA', value)
 })
 
-const submittedData = ref(null)
+const submittedData = ref<typeof formData.value | null>(null)
 
-const handleSubmit = (data: any) => {
-  submittedData.value = data
+const handleSubmit = (data: Record<string, string | number | boolean>) => {
+  submittedData.value = { ...formData.value, ...data }
   console.log('Form submitted:', data)
 }
 
 const handleCancel = () => {
-  formData.value = {
+  store.commit('UPDATE_FORM_DATA', {
     name: '',
     email: '',
     country: '',
     subscribe: false,
     message: ''
-  }
+  })
   submittedData.value = null
   console.log('Form cancelled')
 }
