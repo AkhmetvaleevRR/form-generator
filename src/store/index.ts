@@ -22,6 +22,7 @@ export default createStore({
         type: 'input',
         label: 'Email',
         inputType: 'email',
+        required: true,
         placeholder: 'example@mail.com',
       },
       {

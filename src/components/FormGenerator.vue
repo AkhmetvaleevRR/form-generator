@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="form-generator">
+  <form @submit.prevent="handleSubmit" class="form-generator" novalidate>
     <div v-for="field in fields" :key="field.name" class="form-field">
       <label :for="field.name" class="form-label">
         {{ field.label }}
