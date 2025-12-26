@@ -15,6 +15,7 @@ export default createStore({
         type: 'input',
         label: 'Имя',
         placeholder: 'Введите ваше имя',
+        required: true,
       },
       {
         name: 'email',

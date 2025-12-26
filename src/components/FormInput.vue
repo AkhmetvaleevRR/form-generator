@@ -3,6 +3,7 @@
     :id="id"
     :type="type"
     :placeholder="placeholder"
+    :required="required"
     v-model="value"
     class="form-input"
   />
@@ -15,6 +16,7 @@ interface Props {
   id: string
   type?: string
   placeholder?: string
+  required?: boolean
   modelValue: string
 }
 

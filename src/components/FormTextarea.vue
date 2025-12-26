@@ -3,6 +3,7 @@
     :id="id"
     :placeholder="placeholder"
     :rows="rows || 3"
+    :required="required"
     v-model="value"
     class="form-textarea"
   ></textarea>
@@ -15,6 +16,7 @@ interface Props {
   id: string
   placeholder?: string
   rows?: number
+  required?: boolean
   modelValue: string
 }
 

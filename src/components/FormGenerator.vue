@@ -12,6 +12,7 @@
         :type="field.inputType"
         :placeholder="field.placeholder"
         :required="field.required"
+        :class="{ 'input-error': errors[field.name] }"
         v-model="formData[field.name]"
       />
       
@@ -21,6 +22,7 @@
         :placeholder="field.placeholder"
         :options="field.options"
         :required="field.required"
+        :class="{ 'input-error': errors[field.name] }"
         v-model="formData[field.name]"
       />
       
@@ -29,6 +31,7 @@
         :id="field.name"
         :label="field.checkboxLabel"
         :required="field.required"
+        :class="{ 'input-error': errors[field.name] }"
         v-model="formData[field.name]"
       />
       
@@ -38,8 +41,10 @@
         :placeholder="field.placeholder"
         :rows="field.rows"
         :required="field.required"
+        :class="{ 'input-error': errors[field.name] }"
         v-model="formData[field.name]"
-      />     
+      />
+      <span v-if="errors[field.name]" class="error-message">Поле обязательно для заполнения</span>
     </div>
     
     <div class="form-actions">
@@ -82,17 +87,47 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+const errors = reactive<Record<string, boolean>>({})
 const formData = reactive({ ...props.modelValue })
+
 watch(() => props.modelValue, (newVal) => {
   Object.assign(formData, newVal)
 }, { deep: true })
 
 watch(formData, (newVal) => {
   emit('update:modelValue', { ...newVal })
+  // Очистка ошибок при изменении полей
+  for (const key in errors) {
+    if (errors[key]) {
+      const val = newVal[key]
+      if (val !== '' && val !== null && val !== undefined && val !== false) {
+        errors[key] = false
+      }
+    }
+  }
 })
 
 const handleSubmit = () => {
-  emit('submit', props.modelValue)
+  let isValid = true
+
+  for (const field of props.fields) {
+    if (field.required) {
+      const value = formData[field.name]
+      const isEmpty = value === null || value === undefined || value === ''
+      const isUnchecked = field.type === 'checkbox' && value === false
+      
+      if (isEmpty || isUnchecked) {
+        errors[field.name] = true
+        isValid = false
+      } else {
+        errors[field.name] = false
+      }
+    }
+  }
+  
+  if (isValid) {
+    emit('submit', props.modelValue)
+  }
 }
 
 const handleCancel = () => {
@@ -117,6 +152,13 @@ const handleCancel = () => {
   color: $text-color;
 }
 
+.error-message {
+  display: block;
+  font-size: 12px;
+  color: #e74c3c;
+  margin-top: 4px;
+}
+
 .required-mark {
   color: #e74c3c;
   margin-left: 4px;
@@ -135,6 +177,10 @@ const handleCancel = () => {
     outline: none;
     border-color: $primary-color;
   }
+}
+
+:deep(.input-error) {
+  border-color: #e74c3c !important;
 }
 
 .form-checkbox-wrapper {

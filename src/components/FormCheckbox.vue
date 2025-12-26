@@ -4,6 +4,7 @@
       :id="id"
       type="checkbox"
       v-model="value"
+      :required="required"
       class="form-checkbox"
     />
     <label :for="id" class="form-checkbox-label">{{ label }}</label>
@@ -16,6 +17,7 @@ import { computed } from 'vue'
 interface Props {
   id: string
   label?: string
+  required?: boolean
   modelValue: boolean
 }
 

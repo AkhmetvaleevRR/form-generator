@@ -3,6 +3,7 @@
     :id="id"
     v-model="value"
     class="form-select"
+    :required="required"
   >
     <option value="">{{ placeholder || 'Выберите опцию' }}</option>
     <option v-for="option in options" :key="option.value" :value="option.value">
@@ -22,6 +23,7 @@ interface Option {
 interface Props {
   id: string
   placeholder?: string
+  required?: boolean
   modelValue: string | number | boolean
   options?: Option[]
 }
