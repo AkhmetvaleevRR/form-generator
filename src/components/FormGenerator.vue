@@ -1,14 +1,17 @@
 <template>
   <form @submit.prevent="handleSubmit" class="form-generator">
     <div v-for="field in fields" :key="field.name" class="form-field">
-      <label :for="field.name" class="form-label">{{ field.label }}</label>
+      <label :for="field.name" class="form-label">
+        {{ field.label }}
+        <span v-if="field.required" class="required-mark">*</span>
+      </label>
       
-      <!-- делаем под каждый тип отдельный компонент -->
       <FormInput
         v-if="field.type === 'input'"
         :id="field.name"
         :type="field.inputType"
         :placeholder="field.placeholder"
+        :required="field.required"
         v-model="formData[field.name]"
       />
       
@@ -17,6 +20,7 @@
         :id="field.name"
         :placeholder="field.placeholder"
         :options="field.options"
+        :required="field.required"
         v-model="formData[field.name]"
       />
       
@@ -24,6 +28,7 @@
         v-else-if="field.type === 'checkbox'"
         :id="field.name"
         :label="field.checkboxLabel"
+        :required="field.required"
         v-model="formData[field.name]"
       />
       
@@ -32,6 +37,7 @@
         :id="field.name"
         :placeholder="field.placeholder"
         :rows="field.rows"
+        :required="field.required"
         v-model="formData[field.name]"
       />     
     </div>
@@ -64,7 +70,7 @@ interface FormField {
 
 interface Props {
   fields: FormField[]
-  modelValue:  any
+  modelValue: any
 }
 
 interface Emits {
@@ -109,6 +115,11 @@ const handleCancel = () => {
   margin-bottom: 5px;
   font-weight: 500;
   color: $text-color;
+}
+
+.required-mark {
+  color: #e74c3c;
+  margin-left: 4px;
 }
 
 .form-input,
