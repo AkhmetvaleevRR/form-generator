@@ -170,7 +170,7 @@ const handleCancel = () => {
 .form-input,
 .form-select,
 .form-textarea {
-  width: 100%;
+  width: -webkit-fill-available;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: $border-radius;
