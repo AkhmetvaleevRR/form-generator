@@ -1,48 +1,104 @@
-# form-generator
+# Form Generator Vue.js
 
-This template should help get you started developing with Vue 3 in Vite.
+Универсальный генератор форм на Vue 3
 
-## Recommended IDE Setup
+## Запуск
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```
 npm install
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
+```
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Props
 
-```sh
-npm run build
+| Prop         | Тип                                           | Описание                    |
+| ------------ | --------------------------------------------- | --------------------------- |
+| `fields`     | `FormField[]`                                 | Массив описаний полей формы |
+| `modelValue` | `Record<string, string \| number \| boolean>` | Объект с данными формы      |
+
+### Events
+
+| Event     | Параметры                                           | Описание                       |
+| --------- | --------------------------------------------------- | ------------------------------ |
+| `@submit` | `data: Record<string, string \| number \| boolean>` | Срабатывает при отправке формы |
+| `@cancel` | -                                                   | Срабатывает при отмене формы   |
+
+### Типы полей
+
+#### Input
+
+```typescript
+{
+  name: 'fieldName',
+  type: 'input',
+  label: 'Название поля',
+  placeholder?: 'Подсказка',
+  inputType?: 'text' | 'email' | 'password' | 'number',
+  required?: boolean
+}
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+#### Select
 
-```sh
-npm run lint
+```typescript
+{
+  name: 'fieldName',
+  type: 'select',
+  label: 'Название поля',
+  placeholder?: 'Выберите опцию',
+  required?: boolean,
+  options: [
+    { value: 'value1', label: 'Опция 1' },
+    { value: 'value2', label: 'Опция 2' }
+  ]
+}
 ```
+
+#### Checkbox
+
+```typescript
+{
+  name: 'fieldName',
+  type: 'checkbox',
+  label: 'Название поля',
+  checkboxLabel: 'Текст рядом с чекбоксом',
+  required?: boolean
+}
+```
+
+#### Textarea
+
+```typescript
+{
+  name: 'fieldName',
+  type: 'textarea',
+  label: 'Название поля',
+  placeholder?: 'Подсказка',
+  rows?: number,
+  required?: boolean
+}
+```
+
+## Кастомизация через слоты
+
+### Слоты для полей
+
+**Именование:** `#field-{fieldName}`
+
+**Доступные параметры:**
+
+- `field` - объект поля с настройками
+- `value` - текущее значение поля
+- `error` - состояние ошибки валидации
+
+### Слот для кнопок
+
+**Именование:** `#actions`
+
+**Доступные параметры:**
+
+- `submit` - функция отправки формы
+- `cancel` - функция отмены формы
